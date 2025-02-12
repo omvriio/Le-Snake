@@ -39,7 +39,7 @@ st.write("Scan this QR code to join the game:")
 st.image(generate_qr_code(st.session_state.game_id))
 
 # HTML and JavaScript for the game
-game_code = f"""
+game_code = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
