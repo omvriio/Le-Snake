@@ -2,6 +2,7 @@ import streamlit as st
 import uuid
 import qrcode
 from io import BytesIO
+import streamlit.components.v1 as components
 import random
 
 # Function to generate a unique game session ID
@@ -339,4 +340,4 @@ game_code = """
 """
 
 # Embed the game code in the Streamlit app
-st.components.v1.html(game_code, height=600)
+components.html(game_code, height=600)
