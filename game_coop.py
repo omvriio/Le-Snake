@@ -1,7 +1,44 @@
 import streamlit as st
-import streamlit.components.v1 as components
+import uuid
+import qrcode
+from io import BytesIO
+import random
 
-# Define the HTML and JavaScript for the game
+# Function to generate a unique game session ID
+def generate_game_id():
+    return str(uuid.uuid4())
+
+# Function to generate a QR code for the game session
+def generate_qr_code(game_id):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(f"http://le-snake.streamlit.app/join?game_id={game_id}")
+    qr.make(fit=True)
+    img = qr.make_image(fill='black', back_color='white')
+    buf = BytesIO()
+    img.save(buf)
+    byte_img = buf.getvalue()
+    return byte_img
+
+# Initialize session state
+if 'game_id' not in st.session_state:
+    st.session_state.game_id = generate_game_id()
+
+# Streamlit app
+st.title("Moroccan-Themed Co-op Snake Game")
+
+# Display the game session ID
+st.write("Your Game ID:", st.session_state.game_id)
+
+# Generate and display a QR code for the game session
+st.write("Scan this QR code to join the game:")
+st.image(generate_qr_code(st.session_state.game_id))
+
+# HTML and JavaScript for the game
 game_code = """
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +48,7 @@ game_code = """
     <title>Moroccan-Themed 1v1 Snake Game</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        body {
+        body {{
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,12 +57,12 @@ game_code = """
             background-color: #FFD700; /* Moroccan gold */
             font-family: 'Arial', sans-serif;
             overflow: hidden;
-        }
-        canvas {
+        }}
+        canvas {{
             border: 5px solid #004411; /* Moroccan green */
             background-color: #FFF8DC; /* Moroccan cream */
-        }
-        .score-container {
+        }}
+        .score-container {{
             position: absolute;
             top: 20px;
             left: 50%;
@@ -36,19 +73,19 @@ game_code = """
             padding: 10px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .score {
+        }}
+        .score {{
             font-size: 24px;
             color: #004411;
             display: flex;
             align-items: center;
             margin: 0 10px;
-        }
-        .score .icon {
+        }}
+        .score .icon {{
             font-size: 28px;
             margin-right: 5px;
-        }
-        .modal {
+        }}
+        .modal {{
             display: none;
             position: fixed;
             z-index: 1;
@@ -58,8 +95,8 @@ game_code = """
             height: 100%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.5);
-        }
-        .modal-content {
+        }}
+        .modal-content {{
             background-color: #FFF8DC;
             margin: 15% auto;
             padding: 20px;
@@ -67,22 +104,22 @@ game_code = """
             width: 300px;
             text-align: center;
             border-radius: 10px;
-        }
-        .modal-content h2 {
+        }}
+        .modal-content h2 {{
             color: #004411;
-        }
-        .modal-content p {
+        }}
+        .modal-content p {{
             font-size: 18px;
             color: #004411;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .modal-content p .icon {
+        }}
+        .modal-content p .icon {{
             font-size: 24px;
             margin-right: 5px;
-        }
-        .restart-button, .start-button {
+        }}
+        .restart-button, .start-button {{
             padding: 10px 20px;
             font-size: 16px;
             background-color: #004411;
@@ -91,8 +128,8 @@ game_code = """
             cursor: pointer;
             margin-top: 20px;
             border-radius: 5px;
-        }
-        .countdown {
+        }}
+        .countdown {{
             font-size: 48px;
             color: #004411;
             position: absolute;
@@ -100,11 +137,11 @@ game_code = """
             left: 50%;
             transform: translate(-50%, -50%);
             animation: fadeInOut 1s ease-in-out;
-        }
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
-        }
+        }}
+        @keyframes fadeInOut {{
+            0%, 100% {{ opacity: 0; }}
+            50% {{ opacity: 1; }}
+        }}
     </style>
 </head>
 <body>
@@ -136,10 +173,10 @@ game_code = """
         const box = 20;
         let snake1 = [{ x: 9 * box, y: 10 * box }];
         let snake2 = [{ x: 10 * box, y: 10 * box }];
-        let food = {
+        let food = {{
             x: Math.floor(Math.random() * 19 + 1) * box,
             y: Math.floor(Math.random() * 19 + 1) * box
-        };
+        }};
         let score1 = 0;
         let score2 = 0;
         let d1 = 'RIGHT';
@@ -149,45 +186,45 @@ game_code = """
 
         document.addEventListener('keydown', direction);
 
-        function direction(event) {
+        function direction(event) {{
             let key = event.keyCode;
-            if (key == 37) {
+            if (key == 37) {{
                 d1 = 'LEFT';
-            } else if (key == 38) {
+            }} else if (key == 38) {{
                 d1 = 'UP';
-            } else if (key == 39) {
+            }} else if (key == 39) {{
                 d1 = 'RIGHT';
-            } else if (key == 40) {
+            }} else if (key == 40) {{
                 d1 = 'DOWN';
-            } else if (key == 65) { // 'A' key
+            }} else if (key == 65) {{ // 'A' key
                 d2 = 'LEFT';
-            } else if (key == 87) { // 'W' key
+            }} else if (key == 87) {{ // 'W' key
                 d2 = 'UP';
-            } else if (key == 68) { // 'D' key
+            }} else if (key == 68) {{ // 'D' key
                 d2 = 'RIGHT';
-            } else if (key == 83) { // 'S' key
+            }} else if (key == 83) {{ // 'S' key
                 d2 = 'DOWN';
-            }
-        }
+            }}
+        }}
 
-        function draw() {
+        function draw() {{
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            for (let i = 0; i < snake1.length; i++) {
+            for (let i = 0; i < snake1.length; i++) {{
                 ctx.fillStyle = i === 0 ? '#004411' : '#4CAF50'; // Snake head and body colors
                 ctx.fillRect(snake1[i].x, snake1[i].y, box, box);
 
                 ctx.strokeStyle = '#FFD700';
                 ctx.strokeRect(snake1[i].x, snake1[i].y, box, box);
-            }
+            }}
 
-            for (let i = 0; i < snake2.length; i++) {
+            for (let i = 0; i < snake2.length; i++) {{
                 ctx.fillStyle = i === 0 ? '#0000FF' : '#ADD8E6'; // Snake head and body colors
                 ctx.fillRect(snake2[i].x, snake2[i].y, box, box);
 
                 ctx.strokeStyle = '#FFD700';
                 ctx.strokeRect(snake2[i].x, snake2[i].y, box, box);
-            }
+            }}
 
             ctx.fillStyle = '#FF4500'; // Food color
             ctx.fillRect(food.x, food.y, box, box);
@@ -207,84 +244,84 @@ game_code = """
             if (d2 == 'RIGHT') snakeX2 += box;
             if (d2 == 'DOWN') snakeY2 += box;
 
-            if (snakeX1 == food.x && snakeY1 == food.y) {
+            if (snakeX1 == food.x && snakeY1 == food.y) {{
                 score1++;
-                food = {
+                food = {{
                     x: Math.floor(Math.random() * 19 + 1) * box,
                     y: Math.floor(Math.random() * 19 + 1) * box
-                };
-            } else {
+                }};
+            }} else {{
                 snake1.pop();
-            }
+            }}
 
-            if (snakeX2 == food.x && snakeY2 == food.y) {
+            if (snakeX2 == food.x && snakeY2 == food.y) {{
                 score2++;
-                food = {
+                food = {{
                     x: Math.floor(Math.random() * 19 + 1) * box,
                     y: Math.floor(Math.random() * 19 + 1) * box
-                };
-            } else {
+                }};
+            }} else {{
                 snake2.pop();
-            }
+            }}
 
-            let newHead1 = { x: snakeX1, y: snakeY1 };
-            let newHead2 = { x: snakeX2, y: snakeY2 };
+            let newHead1 = {{ x: snakeX1, y: snakeY1 }};
+            let newHead2 = {{ x: snakeX2, y: snakeY2 }};
 
-            if (snakeX1 < 0 || snakeY1 < 0 || snakeX1 >= canvas.width || snakeY1 >= canvas.height) {
+            if (snakeX1 < 0 || snakeY1 < 0 || snakeX1 >= canvas.width || snakeY1 >= canvas.height) {{
                 endGame('<span class="icon material-icons" style="color: #0000FF;">airplane</span>');
-            }
+            }}
 
-            if (snakeX2 < 0 || snakeY2 < 0 || snakeX2 >= canvas.width || snakeY2 >= canvas.height) {
+            if (snakeX2 < 0 || snakeY2 < 0 || snakeX2 >= canvas.width || snakeY2 >= canvas.height) {{
                 endGame('<span class="icon material-icons" style="color: #004411;">directions_car</span>');
-            }
+            }}
 
             snake1.unshift(newHead1);
             snake2.unshift(newHead2);
 
             document.getElementById('score1').innerText = score1;
             document.getElementById('score2').innerText = score2;
-        }
+        }}
 
-        function endGame(winnerIcon) {
+        function endGame(winnerIcon) {{
             clearInterval(game);
             document.getElementById('finalScore1').innerText = score1;
             document.getElementById('finalScore2').innerText = score2;
             winnerText.innerHTML = 'Winner: ' + winnerIcon;
             gameOverModal.style.display = 'block';
-        }
+        }}
 
-        function startCountdown() {
+        function startCountdown() {{
             let timeLeft = 3;
             countdownDisplay.innerText = timeLeft;
-            countdown = setInterval(() => {
+            countdown = setInterval(() => {{
                 timeLeft -= 1;
-                if (timeLeft >= 0) {
+                if (timeLeft >= 0) {{
                     countdownDisplay.innerText = timeLeft > 0 ? timeLeft : 'GO!';
                     countdownDisplay.style.animation = 'fadeInOut 1s ease-in-out';
-                } else {
+                }} else {{
                     clearInterval(countdown);
                     countdownDisplay.style.display = 'none';
                     startGame();
-                }
-            }, 1000);
-        }
+                }}
+            }}, 1000);
+        }}
 
-        function startGame() {
+        function startGame() {{
             game = setInterval(draw, 100);
-        }
+        }}
 
-        startButton.addEventListener('click', () => {
+        startButton.addEventListener('click', () => {{
             startCountdown();
             startButton.style.display = 'none';
-        });
+        }});
 
-        restartButton.addEventListener('click', () => {
+        restartButton.addEventListener('click', () => {{
             snake1 = [{ x: 9 * box, y: 10 * box }];
             snake2 = [{ x: 10 * box, y: 10 * box }];
-            food = {
+            food = {{
                 x: Math.floor(Math.random() * 19 + 1) * box,
                 y: Math.floor(Math.random() * 19 + 1) * box
-            };
+            }};
             score1 = 0;
             score2 = 0;
             d1 = 'RIGHT';
@@ -295,11 +332,11 @@ game_code = """
             clearInterval(game);
             clearInterval(countdown);
             startCountdown();
-        });
+        }});
     </script>
 </body>
 </html>
 """
 
 # Embed the game code in the Streamlit app
-components.html(game_code, height=600)
+st.components.v1.html(game_code, height=600)
