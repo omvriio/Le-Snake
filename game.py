@@ -39,6 +39,7 @@ st.write("Your Game ID:", st.session_state.game_id)
 st.write("Scan this QR code to join the game:")
 st.image(generate_qr_code(st.session_state.game_id))
 
+# Define the HTML and JavaScript for the game
 game_code = """
 <!DOCTYPE html>
 <html lang="en">
@@ -146,15 +147,15 @@ game_code = """
 </head>
 <body>
     <div class="score-container">
-        <div class="score" id="player1Score"><span class="icon material-icons" style="color: #004411;">familiar_face_and_zone</span> <span id="score1">0</span></div>
-        <div class="score" id="player2Score"><span class="icon material-icons" style="color: #0000FF;">face_5</span> <span id="score2">0</span></div>
+        <div class="score" id="player1Score"><span class="icon material-icons" style="color: #004411;">face_5</span> <span id="score1">0</span></div>
+        <div class="score" id="player2Score"><span class="icon material-icons" style="color: #0000FF;">face_6</span> <span id="score2">0</span></div>
     </div>
     <div class="countdown" id="countdown">3</div>
     <div id="gameOverModal" class="modal">
         <div class="modal-content">
             <h2>Game Over</h2>
-            <p id="player1FinalScore"><span class="icon material-icons" style="color: #004411;">familiar_face_and_zone</span> Player 1 Score: <span id="finalScore1">0</span></p>
-            <p id="player2FinalScore"><span class="icon material-icons" style="color: #0000FF;">face_5</span> Player 2 Score: <span id="finalScore2">0</span></p>
+            <p id="player1FinalScore"><span class="icon material-icons" style="color: #004411;">face_5</span> : <span id="finalScore1">0</span></p>
+            <p id="player2FinalScore"><span class="icon material-icons" style="color: #0000FF;">face_6</span> : <span id="finalScore2">0</span></p>
             <p id="winnerText">Winner: None</p>
             <button class="restart-button" id="restartButton">Restart</button>
         </div>
@@ -268,11 +269,11 @@ game_code = """
             let newHead2 = { x: snakeX2, y: snakeY2 };
 
             if (snakeX1 < 0 || snakeY1 < 0 || snakeX1 >= canvas.width || snakeY1 >= canvas.height) {
-                endGame('<span class="icon material-icons" style="color: #0000FF;">face_5</span>');
+                endGame('<span class="icon material-icons" style="color: #0000FF;">face_6</span>');
             }
 
             if (snakeX2 < 0 || snakeY2 < 0 || snakeX2 >= canvas.width || snakeY2 >= canvas.height) {
-                endGame('<span class="icon material-icons" style="color: #004411;">familiar_face_and_zone</span>');
+                endGame('<span class="icon material-icons" style="color: #004411;">face_5</span>');
             }
 
             snake1.unshift(newHead1);
@@ -340,3 +341,4 @@ game_code = """
 
 # Embed the game code in the Streamlit app
 components.html(game_code, height=600)
+
