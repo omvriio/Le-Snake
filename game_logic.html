@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Snake Game Multiplayer</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #FFD700; }
+        canvas { border: 5px solid #004411; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const socket = new WebSocket("ws://localhost:8000");
+
+        let snake = [{ x: 9, y: 10 }];
+        let food = { x: 5, y: 5 };
+        let direction = 'RIGHT';
+        let score = 0;
+
+        document.addEventListener('keydown', event => {
+            if (event.keyCode == 37) direction = 'LEFT';
+            if (event.keyCode == 38) direction = 'UP';
+            if (event.keyCode == 39) direction = 'RIGHT';
+            if (event.keyCode == 40) direction = 'DOWN';
+        });
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = i === 0 ? 'green' : 'lightgreen';
+                ctx.fillRect(snake[i].x * 20, snake[i].y * 20, 20, 20);
+            }
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x * 20, food.y * 20, 20, 20);
+        }
+
+        function update() {
+            let head = { ...snake[0] };
+            if (direction === 'LEFT') head.x -= 1;
+            if (direction === 'UP') head.y -= 1;
+            if (direction === 'RIGHT') head.x += 1;
+            if (direction === 'DOWN') head.y += 1;
+
+            snake.unshift(head);
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                food = { x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20) };
+            } else {
+                snake.pop();
+            }
+
+            socket.send(JSON.stringify({ player: 'player1', x: head.x, y: head.y, score: score }));
+        }
+
+        setInterval(() => {
+            update();
+            draw();
+        }, 100);
+
+        socket.onmessage = (event) => {
+            const gameState = JSON.parse(event.data);
+            console.log("Game state updated:", gameState);
+        };
+    </script>
+</body>
+</html>
